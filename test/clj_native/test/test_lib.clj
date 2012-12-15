@@ -17,13 +17,17 @@
    (point
     :x int
     :y int
-    :name constchar*))
+    :name constchar*)
+   (hack
+    :length int
+    :items  int[]))
   (:functions
    (mul [int int] int)
    (and2 [byte byte] byte)
    (and3 [byte byte byte*] void)
    (and3_buf [byte byte byte* int n-buf*] void)
-   (static_point [int int] point*)))
+   (static_point [int int] point*)
+   (struct_hack [] hack*)))
 
 (println "NOTE: Testing assumes a built test/clj_native/test/test_lib library")
 (System/setProperty "jna.library.path" "./test/clj_native/test")
@@ -86,4 +90,11 @@
                       (= "foo" (.name thepoint))))
        1 2 1 2
        -1 -4 -1 -4))
+
+;; tests the struct hack
+;; see http://c2.com/cgi/wiki?StructHack for what this is
+(deftest test-struct-hack
+  (let [thestruct (struct_hack)]
+    (is (= (.length thestruct) 5))
+    (is (= (seq (.items thestruct)) [0 1 2 3 4]))))
 
